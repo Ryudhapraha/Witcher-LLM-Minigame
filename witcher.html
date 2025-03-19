@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Witcher Battle Minigame</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #1e1e1e; color: white; }
+        .container { max-width: 500px; margin: auto; padding: 20px; border: 2px solid white; border-radius: 10px; background-color: #333; }
+        .stats { margin-bottom: 20px; }
+        .buttons button { margin: 5px; padding: 10px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Witcher Battle</h1>
+        <div class="stats">
+            <p><strong>Witcher HP:</strong> <span id="witcher-hp">100</span></p>
+            <p><strong>Enemy HP:</strong> <span id="enemy-hp">100</span></p>
+        </div>
+        <div class="buttons">
+            <button onclick="attack()">Steel Sword Attack</button>
+            <button onclick="castSign('Igni')">Cast Igni</button>
+            <button onclick="castSign('Quen')">Cast Quen (Shield)</button>
+            <button onclick="castSign('Yrden')">Cast Yrden (Slow)</button>
+        </div>
+        <p id="log"></p>
+    </div>
+
+    <script>
+        let witcherHP = 100;
+        let enemyHP = 100;
+        let quenActive = false;
+
+        function attack() {
+            let damage = Math.floor(Math.random() * 15) + 10;
+            enemyHP -= damage;
+            logAction(`You attack with your sword and deal ${damage} damage!`);
+            enemyTurn();
+        }
+
+        function castSign(sign) {
+            if (sign === 'Igni') {
+                let damage = Math.floor(Math.random() * 20) + 15;
+                enemyHP -= damage;
+                logAction(`You cast Igni and burn the enemy for ${damage} damage!`);
+            } else if (sign === 'Quen') {
+                quenActive = true;
+                logAction("You cast Quen. The next attack against you will be blocked!");
+            } else if (sign === 'Yrden') {
+                logAction("You cast Yrden. The enemy's attack is weakened!");
+            }
+            enemyTurn();
+        }
+
+        function enemyTurn() {
+            if (enemyHP <= 0) {
+                logAction("You defeated the enemy!");
+                return;
+            }
+            let damage = Math.floor(Math.random() * 15) + 5;
+            if (quenActive) {
+                quenActive = false;
+                logAction("The enemy attacks, but Quen absorbs the damage!");
+                return;
+            }
+            witcherHP -= damage;
+            logAction(`The enemy strikes back and deals ${damage} damage!`);
+            checkGameOver();
+        }
+
+        function checkGameOver() {
+            if (witcherHP <= 0) {
+                logAction("You have been defeated!");
+            }
+        }
+
+        function logAction(text) {
+            document.getElementById("log").innerText = text;
+            document.getElementById("witcher-hp").innerText = witcherHP;
+            document.getElementById("enemy-hp").innerText = enemyHP;
+        }
+    </script>
+</body>
+</html>
